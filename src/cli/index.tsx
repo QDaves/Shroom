@@ -6,15 +6,17 @@ import { JSDOM } from "jsdom";
 import { dump } from "../tools/dump/dump";
 import { runForwardingServer } from "../tools/proxy/runForwardingServer";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { hideBin } = require("yargs/helpers");
+import { hideBin } from "yargs/helpers";
 
 const jsdom = new JSDOM();
 
 global.DOMParser = jsdom.window.DOMParser;
 
 yargs(hideBin(process.argv))
-  .command(
+  .command<{
+    url?: string;
+    location: string;
+  }>(
     "dump",
     "dump external variables",
     (yargs) => {
@@ -39,7 +41,16 @@ yargs(hideBin(process.argv))
       }).catch(console.error);
     }
   )
-  .command(
+  .command<{
+      _: string[];
+      targetPort: number;
+      port: number;
+      prependLengthPrefix: boolean;
+      debug: boolean;
+      cert?: string;
+      key?: string;
+      targetHost?: string;
+    }>(
     "proxy",
     "host a proxy server forwarding WebSocket traffic to an emulator",
     (yargs) => {

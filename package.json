@@ -43,6 +43,7 @@
   "dependencies": {
     "@gizeta/swf-reader": "^1.0.0",
     "@timohausmann/quadtree-js": "^1.2.3",
+    "@types/yargs": "^17.0.33",
     "axios": "^0.21.1",
     "bin-pack": "^1.0.2",
     "bluebird": "^3.7.2",
