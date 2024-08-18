@@ -57,7 +57,8 @@ export class FurnitureLoader implements IFurnitureLoader {
       await new Promise((resolve) => setTimeout(resolve, this.delay));
     }
 
-    let typeWithColor: string;
+    // Variant can be a color or poster ID.
+    let typeWithVariant: string;
 
     if (fetch.kind === "id") {
       const type = await this._options.furnitureData.getTypeById(
@@ -67,25 +68,35 @@ export class FurnitureLoader implements IFurnitureLoader {
       if (type == null)
         throw new Error("Couldn't determine type for furniture.");
 
-      typeWithColor = type;
+      typeWithVariant = type;
     } else {
-      typeWithColor = fetch.type;
+      typeWithVariant = fetch.type;
     }
 
-    const typeSplitted = typeWithColor.split("*");
-    const type = typeSplitted[0];
+    const typeSplitted = typeWithVariant.split("*");
+    const baseType = typeSplitted[0];
+
+    let type = baseType;
+    if (type === "poster") {
+      if (typeSplitted.length >= 2) {
+        typeWithVariant = "poster"+typeSplitted[1];
+      } else {
+        typeWithVariant = "poster0";
+      }
+      type = typeWithVariant;
+    }
 
     const revision = await this._options.furnitureData.getRevisionForType(
-      typeWithColor
+      baseType === "poster" ? "poster" : typeWithVariant
     );
 
-    let furniture = this._furnitureCache.get(typeWithColor);
+    let furniture = this._furnitureCache.get(typeWithVariant);
     if (furniture != null) {
       return furniture;
     }
 
     furniture = loadFurni(
-      typeWithColor,
+      typeWithVariant,
       await this._getAssetBundle(type, revision)
     );
     this._furnitureCache.set(type, furniture);
