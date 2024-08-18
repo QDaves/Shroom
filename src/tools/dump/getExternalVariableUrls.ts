@@ -19,10 +19,13 @@ export async function getExternalVariableUrls(
 
   const furniDataUrl = parsed.get("furnidata.load.url");
 
+  const externalTextsUrl = parsed.get("external.texts.txt");
+
   if (figureMapUrl == null) throw new Error("Invalid figure map url");
   if (hofFurniUrl == null) throw new Error("Invalid hof_furni url");
   if (figureDataUrl == null) throw new Error("Invalid figure data url");
   if (furniDataUrl == null) throw new Error("Invalid furni data url");
+  if (externalTextsUrl == null) throw new Error("Invalid external texts url");
 
   const gordonUrl = figureMapUrl.split("/").slice(0, -1).join("/");
 
@@ -35,6 +38,7 @@ export async function getExternalVariableUrls(
     furniDataUrl,
     gordonUrl,
     effectMapUrl,
+    externalTextsUrl,
   };
 }
 
@@ -45,4 +49,5 @@ export interface ExternalVariables {
   furniDataUrl: string;
   gordonUrl: string;
   effectMapUrl: string;
+  externalTextsUrl: string;
 }

@@ -15,6 +15,7 @@ export async function downloadAllFiles(
     hofFurniUrl,
     effectMapUrl,
     gordonUrl,
+    externalTextsUrl,
   }: ExternalVariables,
   logger: Logger
 ) {
@@ -44,9 +45,14 @@ export async function downloadAllFiles(
     logger
   );
 
+  const externalTexts = await downloadFileWithMessage(
+    { url: externalTextsUrl, savePath: path.join(downloadPath, "external_texts.txt") },
+    logger
+  );
+
   await downloadFigures({ gordonUrl, file: figureMap, downloadPath }, logger);
   await downloadFurnitures(
-    { downloadPath, file: furniData, hofFurniUrl },
+    { downloadPath, file: furniData, externalTexts, hofFurniUrl },
     logger
   );
   await downloadEffects(

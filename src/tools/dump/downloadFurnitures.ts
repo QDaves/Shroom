@@ -8,16 +8,19 @@ import {
 } from "./downloadFile";
 import { downloadMultipleFiles } from "./downloadMultipleFiles";
 import { Logger } from "./Logger";
+import { parseExternalVariables } from "./parseExternalVariables";
 
 export async function downloadFurnitures(
   {
     downloadPath,
     hofFurniUrl,
     file,
+    externalTexts,
   }: {
     downloadPath: string;
     hofFurniUrl: string;
     file: DownloadFileResult;
+    externalTexts: DownloadFileResult;
   },
   logger: Logger
 ) {
@@ -31,31 +34,35 @@ export async function downloadFurnitures(
   const furniData = new FurnitureData(() => file.text());
   const infos = await furniData.getInfos();
 
-  const furnitureRequests = infos.map(([key, info]) => {
-    return {
-      type: key.split("*")[0],
-      revision: info.revision,
-    };
-  });
+  const furnitureRequests = new Map<string, number>();
+  for (const [key, info] of infos) {
+    if (info.revision) {
+      furnitureRequests.set(key.split("*")[0], info.revision)
+    }
+  }
 
-  const downloadingTypes = new Set<string>();
-  const furnitureRequestsDeduplicated: {
-    type: string;
-    revision: number | undefined;
-  }[] = [];
-
-  furnitureRequests.forEach((element) => {
-    const downloadId = `${element.revision}/${element.type}`;
-
-    if (downloadingTypes.has(downloadId)) return;
-    downloadingTypes.add(downloadId);
-
-    furnitureRequestsDeduplicated.push(element);
-  });
+  // Extract poster variants from the external texts.
+  if (externalTexts.type === "SUCCESS") {
+    const posterRevision = furnitureRequests.get("poster");
+    if (posterRevision) {
+      const texts = parseExternalVariables(await externalTexts.text())
+      const regexPosterVariant = /^poster_(\d+)_name$/i
+      for (const [key] of texts) {
+        const match = regexPosterVariant.exec(key);
+        if (match) {
+          furnitureRequests.set(`poster${match[1]}`, posterRevision);
+        }
+      }
+    }
+  } else {
+    logger.info(
+      "Skipping downloading poster variants, since we couldn't download the external texts."
+    );
+  }
 
   await downloadMultipleFiles(
     {
-      data: furnitureRequestsDeduplicated,
+      data: [...furnitureRequests.entries()].map(([type, revision]) => ({ type, revision })),
       concurrency: 30,
       logger,
       name: "Furnitures",
