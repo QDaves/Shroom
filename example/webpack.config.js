@@ -1,10 +1,9 @@
 const path = require("path");
-const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+    mode: "development",
     entry: "./src/index.ts",
     output: {
       filename: "[name].[fullhash].js",
@@ -16,6 +15,9 @@ module.exports = {
       fallback: { "buffer": false, "timers": false }
     },
     optimization: { splitChunks: { chunks: 'all' }, runtimeChunk: true, minimizer: [] },
+    performance: {
+      hints: false
+    },
     module: {
       rules: [
         {
@@ -24,8 +26,7 @@ module.exports = {
             {
               loader: "babel-loader",
               options: {
-                /* Use `babel.config.js` in root folder */
-                rootMode: "upward",
+                presets: ['@babel/preset-env', '@babel/preset-typescript']
               },
             },
           ],
@@ -33,7 +34,7 @@ module.exports = {
         },
         {
           test: /\.(png|svg|bmp)$/,
-          loader: "file-loader",
+          type: 'asset/resource',
         },
       ],
     },
@@ -42,12 +43,11 @@ module.exports = {
       new HtmlWebpackPlugin({
         template: "./src/index.ejs",
       }),
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.EnvironmentPlugin({
-        NODE_ENV: "development",
-      }),
     ],
     devServer: {
-      contentBase: [path.join(__dirname, 'public')]
+      static: {
+        directory: path.join(__dirname, 'public')
+      },
+      port: 8081
     }
   };

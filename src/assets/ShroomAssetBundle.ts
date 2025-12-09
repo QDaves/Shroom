@@ -81,7 +81,7 @@ export class ShroomAssetBundle implements IAssetBundle {
     const buffer = this._files.get(name);
     if (buffer == null) throw new Error(`Couldn't find ${name}.`);
 
-    const blob = new Blob([buffer]);
+    const blob = new Blob([new Uint8Array(buffer as ArrayBuffer)]);
     this._blobs.set(name, blob);
 
     return blob;

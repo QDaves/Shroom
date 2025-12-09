@@ -1,14 +1,5 @@
 node_modules
-/public/hof_furni
-/resources
-/public
-/dist
-/example/public/hof_furni
-/example/public/figure
-/example/public/resources
-/example/public/images
-/storybook/public/resources
-/storybook/public/images
-/e2e/public/resources
-yarn.lock
+dist
+assets-dump
+example
 /.idea

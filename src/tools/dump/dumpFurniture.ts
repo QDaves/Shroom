@@ -44,7 +44,7 @@ export async function dumpFurniture(
   const encoder = new TextEncoder();
 
   const furnitureFile = new ShroomAssetBundle();
-  furnitureFile.addFile("index.json", encoder.encode(jsonString));
+  furnitureFile.addFile("index.json", Buffer.from(encoder.encode(jsonString)));
   furnitureFile.addFile("spritesheet.png", image);
 
   await fs.writeFile(`${dumpLocation}.shroom`, furnitureFile.toBuffer());

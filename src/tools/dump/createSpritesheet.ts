@@ -22,12 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-import Canvas from "canvas";
+import { loadImage, createCanvas, Canvas } from "@napi-rs/canvas";
 import pack from "bin-pack";
 import { detectEdges } from "./detectEdges";
 import * as path from "path";
-
-const { loadImage, createCanvas } = Canvas;
 
 const defaultOptions = {
   outputFormat: "png",
@@ -164,7 +162,7 @@ export async function createSpritesheet(
   };
 
   // Write image
-  const image = canvas.toBuffer();
+  const image = canvas.toBuffer("image/png");
 
   return {
     json,

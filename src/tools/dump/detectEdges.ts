@@ -1,4 +1,4 @@
-import { Canvas } from "canvas";
+import { Canvas } from "@napi-rs/canvas";
 
 const checkOpacityLevel = (tolerance: number) => (
   pixels: Uint8ClampedArray
