@@ -14,7 +14,7 @@ global.DOMParser = jsdom.window.DOMParser;
 
 yargs(hideBin(process.argv))
   .command<{
-    url?: string;
+    url: string;
     location: string;
   }>(
     "dump",
@@ -23,6 +23,7 @@ yargs(hideBin(process.argv))
       yargs
         .option("url", {
           type: "string",
+          default: "https://sandbox.habbo.com/gamedata/external_variables/1",
           describe: "Url to external variables",
         })
         .option("location", {
@@ -34,7 +35,7 @@ yargs(hideBin(process.argv))
           "Provide a location to store the extracted resources"
         );
     },
-    (options: { url?: string; location: string }) => {
+    (options: { url: string; location: string }) => {
       dump({
         externalVariables: options.url,
         downloadPath: options.location,

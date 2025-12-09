@@ -27,22 +27,20 @@ export async function dump({ externalVariables, downloadPath }: Options) {
     console.log(separator);
   };
 
-  if (externalVariables != null) {
-    const variables = await getExternalVariableUrls(externalVariables);
+  const variables = await getExternalVariableUrls(externalVariables);
 
-    await step("Download from Server", async () => {
-      console.log("Found following urls in the external variables:");
-      console.log("- Figure Data:", variables.figureDataUrl);
-      console.log("- Figure Map:", variables.figureMapUrl);
-      console.log("- Furni Data", variables.furniDataUrl);
-      console.log("- Furniture:", variables.hofFurniUrl);
-      console.log("- Effect Map:", variables.effectMapUrl);
-      console.log("");
+  await step("Download from Server", async () => {
+    console.log("Found following urls in the external variables:");
+    console.log("- Figure Data:", variables.figureDataUrl);
+    console.log("- Figure Map:", variables.figureMapUrl);
+    console.log("- Furni Data", variables.furniDataUrl);
+    console.log("- Furniture:", variables.hofFurniUrl);
+    console.log("- Effect Map:", variables.effectMapUrl);
+    console.log("");
 
-      await downloadAllFiles(downloadPath, variables, logger);
-      console.log(`Successfully downloaded files into ${downloadPath}`);
-    });
-  }
+    await downloadAllFiles(downloadPath, variables, logger);
+    console.log(`Successfully downloaded files into ${downloadPath}`);
+  });
 
   await step("Extract SWFs", async () => {
     const furnitureSwfs = await glob(`${downloadPath}/hof_furni/**/*.swf`);
@@ -69,6 +67,6 @@ export async function dump({ externalVariables, downloadPath }: Options) {
 }
 
 interface Options {
-  externalVariables?: string;
+  externalVariables: string;
   downloadPath: string;
 }
